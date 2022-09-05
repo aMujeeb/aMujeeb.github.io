@@ -61,11 +61,11 @@
       function onPlayerStateChange(event) {
         if (event.data == YT.PlayerState.PLAYING && !done) {
           setTimeout(stopVideo, 15000);
+          setTimeout(showToast, 5000);
           done = true;
         }
       }
       function stopVideo() {
-        showToast;
         player.stopVideo();
       }
     </script>
