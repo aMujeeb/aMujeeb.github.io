@@ -8,31 +8,14 @@
     var tag = document.createElement('script');
 
         function showToast(){
-
-            /* 
-                Call the 'makeToast' method in the Java code. 
-                'app' is specified in MainActivity.java when 
-                adding the JavaScript interface. 
-             */
             app.endVideo();
             return false;
         }
 
-        /* 
-            Call the 'showToast' method when the form gets 
-            submitted (by pressing button or return key on keyboard). 
-         */
-        window.onload = function(){
-            var form = document.getElementById("form");
-            form.onsubmit = showToast;
-        }
-
-        tag.src = "https://www.youtube.com/iframe_api";
+      tag.src = "https://www.youtube.com/iframe_api";
       var firstScriptTag = document.getElementsByTagName('script')[0];
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-      // 3. This function creates an <iframe> (and YouTube player)
-      //    after the API code downloads.
       var player;
       function onYouTubeIframeAPIReady() {
         player = new YT.Player('player', {
@@ -54,14 +37,11 @@
         event.target.playVideo();
       }
 
-      // 5. The API calls this function when the player's state changes.
-      //    The function indicates that when playing a video (state=1),
-      //    the player should play for six seconds and then stop.
       var done = false;
       function onPlayerStateChange(event) {
         if (event.data == YT.PlayerState.PLAYING && !done) {
-          setTimeout(stopVideo, 15000);
-          setTimeout(showToast, 5000);
+          setTimeout(stopVideo, 20000);
+          setTimeout(showToast, 10000);
           done = true;
         }
       }
@@ -73,14 +53,7 @@
 
 <body>
 
-<form id="form">
-    Message: <input id="message" name="message" type="text"/><br />
-    Long: <input id="length" name="length" type="checkbox" /><br />
-
-    <input type="submit" value="Make Toast" />
-</form>
-
-<div id="player"></div>
+  <div id="player"></div>
 
 </body>
 </html>
