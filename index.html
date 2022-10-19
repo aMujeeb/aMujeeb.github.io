@@ -1,59 +1,592 @@
-<!DOCTYPE html>
+
 <html>
-<head>
-    <title>JavaScript View</title>
 
-    <script type="text/javascript">
-
-    var tag = document.createElement('script');
-
-        function showToast(){
-            app.endVideo();
-            return false;
-        }
-
-      tag.src = "https://www.youtube.com/iframe_api";
-      var firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-      var player;
-      function onYouTubeIframeAPIReady() {
-        player = new YT.Player('player', {
-          height: '700',
-          width: '100%',
-          videoId: 'MzgMBrtrFc4',
-          playerVars: {
-            'controls': 0,
-			'autoplay': 1
-          },
-          events: {
-            'onReady': onPlayerReady,
-            'onStateChange': onPlayerStateChange
-          }
-        });
-      }
-
-      function onPlayerReady(event) {
-        event.target.playVideo();
-      }
-
-      var done = false;
-      function onPlayerStateChange(event) {
-        if (event.data == YT.PlayerState.PLAYING && !done) {
-          setTimeout(stopVideo, 20000);
-          setTimeout(showToast, 10000);
-          done = true;
-        }
-      }
-      function stopVideo() {
-        player.stopVideo();
-      }
-    </script>
-</head>
-
-<body>
-
-  <div id="player"></div>
-
-</body>
-</html>
+	<head>
+	
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="user-scalable=no, initial-scale=1.0">
+		<style>
+			body{
+				margin: 0;
+				width: 100%;
+				background-color: #F8F8F8;
+				font-family: Metropolis, Helvetica, sans-serif;
+				color: #3C3C3C;
+			}
+	
+			a{
+				color: #E90000;
+			}
+			
+			.videoContainer{
+				width: 100%;
+				overflow: hidden;
+				position: relative;
+				text-align: center;
+			}
+			
+			.videoOverlayTop{
+				top:0;
+				left: 0;
+				width: 100%;
+				height: 200px;
+				background: transparent linear-gradient(180deg, #000000 0%, #00000000 100%) 0% 0% no-repeat padding-box;
+				position: absolute;
+			}
+			
+			.videoOverlayBottom{
+				bottom:0;
+				left: 0;
+				width: 100%;
+				height: 200px;
+				background: transparent linear-gradient(180deg, #00000000 0%, #000000 100%) 0% 0% no-repeat padding-box;
+				position: absolute;
+				text-align: center;
+				color: white;
+			}
+			
+			.videoOverlayBottom img{
+				margin-top: 50px;
+				margin-bottom: 8px;
+			}
+			
+			.nbhIntro{
+				padding: 16px;
+				background-color: white;
+				box-shadow: 0px 3px 6px #00000029;
+			}
+			
+			.introTitle{
+				color: #E90000;
+				font-weight: bold;
+				font-size: 20px;
+				line-height: 24px;
+			}
+			
+			.introContent{
+				margin-top: 8px;
+				font-size: 16px;
+				line-height: 20px;
+			}
+			
+			.introVideo{
+				margin-top: 8px;
+			}
+	
+			.infoPanel{
+				margin: 24px 24px 0px 24px;
+				padding: 16px;
+				background-color: white;
+				box-shadow: 0px 3px 6px #00000029;
+				border-radius: 8px;
+				text-align:  center;
+			}
+	
+			.infoText{
+				font-size:  16px;
+			}
+	
+			.infoTitle{
+				font-size: 24px;
+				font-weight:  bold;
+				color: #E90000;
+			}
+	
+			.mrtStationSign img{
+				height:  24px;
+				margin-top: 8px;
+				margin-left:  auto;
+				margin-right:  auto;
+			}
+	
+	
+			.ctaButton{
+				margin-top: 24px;
+				height: 48px;
+				border: 1px solid #E90000;
+				border-radius: 32px;
+				width: 100%;
+				background-color: transparent;
+				font-size: 16px;
+				color: #E90000;
+			}
+	
+			.poiList{
+				background-image: url('src/lineBg.png');
+				background-position:  center;
+				background-repeat: repeat-y;
+				z-index: 0;
+			}
+	
+			.mainPoiPanel{
+				margin: 32px 24px 0px 24px;
+				box-shadow: 0px 3px 6px #00000029;
+				border-radius: 8px;
+				background-size: cover;
+				background-position:  center;
+				background-repeat:  no-repeat;
+			}
+	
+			.mainPoiTopSegment{
+				height:  100px;
+				padding:  16px 16px 0px 16px;
+				background: transparent linear-gradient(180deg, #000000 0%, #00000000 100%) 0% 0% no-repeat padding-box;
+				border-radius:  8px 8px 0px 8px;
+			}
+	
+			.mainPoiName{
+				font-size:  24px;
+				line-height:  28px;
+				color:  white;
+				font-weight:  bold;
+				max-width:  240px;
+				float:  left;
+			}
+	
+			.mainPoiBtn{
+				text-align:  right;
+			}
+	
+			.mainPoiBottomSegment{
+				margin-top:  48px;
+				padding:  0px 16px 8px 16px;
+			}
+	
+			.mainPoiNo{
+				font-size:  20px;
+				background-color: #E90000;
+				height:  24px;
+				width:  24px;
+				border-radius:  20px;
+				text-align:  center;
+				padding:  6px 10px 4px 8px;
+				color:  white;
+				font-weight:  bold;
+				display:  inline;
+				margin-right:  4px;
+			}
+	
+			.poiTagging{
+				height:  24px;
+				padding:  6px 8px 4px 8px;
+				width:  fit-content;
+				background: #FFFFFF 0% 0% no-repeat padding-box;
+				border-radius: 16px;
+				opacity: 0.8; 
+				display:  inline;
+				margin-right:  8px;
+				line-height:  32px;
+			}
+	
+			.secPoiPanel{
+				margin: 12px 40px 0px 40px;
+				box-shadow: 0px 3px 6px #00000029;
+				border-radius: 8px;
+				background-color:  white;
+				min-height:  80px;
+			}
+	
+			.secPoiImg{
+				padding:  8px;
+				float: left;
+			}
+	
+			.secPoiImg img{
+				height:  64px;
+				width:  64px;
+			}
+	
+			.secPoiContent{
+				padding: 8px 8px 8px 8px;
+			}
+	
+			.secPoiName{
+				font-size: 16px;
+				font-weight:  500;
+				line-height:  20px;
+			}
+	
+			.secPoiDesc{
+				margin-top:  4px;
+				line-height:  18px;
+				font-size:  14px;
+			}
+	
+			.poiInfoPanel{
+				margin: 12px 40px 0px 40px;
+				box-shadow: 0px 3px 6px #00000029;
+				border-radius: 8px;
+				background-color:  #E8E8E8;
+				min-height:  24px;
+				padding:  8px;
+			}
+	
+			.infoIcon{
+				float:  left;
+				margin-right:  8px;
+			}
+	
+			.infoContent{
+				font-size:  14px;
+				line-height:  18px;
+			}
+	
+		</style>
+	</head>
+	
+	<body>
+		
+		<div class="videoContainer">
+			<video height="100%" autoplay loop muted playsinline>
+			  <source src="src/chinatownClip.mp4" type="video/mp4">
+			Your browser does not support the video tag.
+			</video>
+		</div>
+		
+		<div class="videoOverlayTop">
+		</div>
+		
+		<div class="videoOverlayBottom">
+			<img width="75px" src="src/swipeup.gif"/>
+			<br/>Swipe Up
+		</div>
+		
+		<div class="nbhIntro">
+			<div class="introTitle">
+				Exploring Singapore - Chinatown
+			</div>
+			<div class="introContent">
+				Once an enclave for Singapore's Chinese immigrant population, you'll see this neighbourhood bustling with ornate temples, heritage shops and hip bars. Come experience what else Chinatown has to offer!
+			</div>
+			<div class="introVideo">
+				<iframe width="100%" src="https://www.youtube.com/embed/4_QgAoBj9sk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+			</div>
+		</div>
+	
+		<div class="poiList">
+	
+			<div class="infoPanel">
+				<div class="infoText">
+					Start yout journey from:
+				</div>
+				<div class="infoTitle" style="margin-top:8px">
+					Chinatown MRT Station
+				</div>
+				<div class="mrtStationSign">
+					<img src="src/mrtStation.png"/>
+				</div>
+				<a href="https://goo.gl/maps/Gt6dxeyN4AxrbHf9A" target="_blank">
+					<button class="ctaButton">
+						How to get there?
+					</button>
+				</a>
+	
+			</div>
+	
+			<div class="mainPoiPanel" style="background-image: url('src/mPoi1.png');">		
+					<div class="mainPoiTopSegment">
+						<div class="mainPoiName">
+							Chinatown Street Market
+						</div>
+						<div class="mainPoiBtn">
+							<a href="vsapp://poi?uuid=002404027a5c89240478eb318fe1f240298&dataset=attractions" target="_blank"><img src="src/gotoBtn.png"/></a>
+						</div>
+					</div>
+					<div class="mainPoiBottomSegment">
+						<div class="mainPoiNo">1</div>
+						<div class="poiTagging">
+							Shopping
+						</div>
+						<div class="poiTagging">
+							Food & Beverage
+						</div>
+					</div>
+			</div>
+	
+			<div class="secPoiPanel">
+				<div class="secPoiImg">
+					<img src="src/sPoi1.png"/>
+				</div>
+				<div class="secPoiContent">
+					<div class="secPoiName">
+						<a href="vsapp://poi?uuid=002d22415fe71734144bc12baa3bcc5a142&dataset=attractions">Nanyang Coffee House</a>
+					</div>
+					<div class="secPoiDesc">
+						Take a coffee break and check out the mini museum upstairs!
+					</div>
+				</div>
+			</div>
+	
+			<div class="secPoiPanel">
+				<div class="secPoiImg">
+					<img src="src/sPoi2.png"/>
+				</div>
+				<div class="secPoiContent">
+					<div class="secPoiName">
+						<a href="vsapp://poi?uuid=0074487de57bd904ddb944d3c435f7742fb&dataset=shops">Lim Chee Guan</a>
+					</div>
+					<div class="secPoiDesc">
+						Buy some Bak Kwa (meat jerky; a must-have snack during Chinese New Year) for your loved ones.
+					</div>
+				</div>
+			</div>
+	
+			<div class="secPoiPanel">
+				<div class="secPoiImg">
+					<img src="src/sPoi3.png"/>
+				</div>
+				<div class="secPoiContent">
+					<div class="secPoiName">
+						<a href="vsapp://poi?uuid=005fcebe3a8b0b5486db4ba38e00b5241e0&dataset=food_beverages">Yum Cha Chinatown</a>
+					</div>
+					<div class="secPoiDesc">
+						Meet the Traditional Dim Sum specialists in Chinatown!
+					</div>
+				</div>
+			</div>
+	
+			<div class="mainPoiPanel" style="background-image: url('src/mPoi2.png');">		
+					<div class="mainPoiTopSegment">
+						<div class="mainPoiName">
+							Sri Mariamman Temple
+						</div>
+						<div class="mainPoiBtn">
+							<a href="vsapp://poi?uuid=0028ee25a8331b94c9a8b5747d10f3b0c31&dataset=attractions" target="_blank"><img src="src/gotoBtn.png"/></a>
+						</div>
+					</div>
+					<div class="mainPoiBottomSegment">
+						<div class="mainPoiNo">2</div>
+						<div class="poiTagging">
+							History & Culture
+						</div><br/>
+						<div class="poiTagging">
+							Places of Worship
+						</div>
+					</div>
+			</div>
+	
+			<div class="secPoiPanel">
+				<div class="secPoiImg">
+					<img src="src/sPoi4.png"/>
+				</div>
+				<div class="secPoiContent">
+					<div class="secPoiName">
+						<a href="vsapp://poi?uuid=002f6bc8aa5f94841a0881ca14b1b26d054&dataset=attractions">Masjid Jamae (Chulia)</a>
+					</div>
+					<div class="secPoiDesc">
+						You will notice another place of worship from a different religion, along the way!
+					</div>
+				</div>
+			</div>
+	
+			<div class="secPoiPanel">
+				<div class="secPoiImg">
+					<img src="src/sPoi5.png"/>
+				</div>
+				<div class="secPoiContent">
+					<div class="secPoiName">
+						<a href="vsapp://poi?uuid=005367afa5e33d1471da498dd87a8a046be&dataset=food_beverages">Tong Heng Traditional Cantonese Pastries</a>
+					</div>
+					<div class="secPoiDesc">
+						A must-try, the handmade egg tarts are a popular choice with locals!
+					</div>
+				</div>
+			</div>
+	
+			<div class="secPoiPanel">
+				<div class="secPoiImg">
+					<img src="src/sPoi6.png"/>
+				</div>
+				<div class="secPoiContent">
+					<div class="secPoiName">
+						<a href="vsapp://poi?uuid=0077e5afde1e7854116a27a1f9631363882&dataset=shops">Thye Shan Medical Hall</a>
+					</div>
+					<div class="secPoiDesc">
+						Be sure to pop by for your traditional Chinese medicine fix!
+					</div>
+				</div>
+			</div>
+	
+			<div class="mainPoiPanel" style="background-image: url('src/mPoi3.png');">		
+					<div class="mainPoiTopSegment">
+						<div class="mainPoiName">
+							Buddha Tooth Relic Temple
+						</div>
+						<div class="mainPoiBtn">
+							<a href="vsapp://poi?uuid=002c327df2cb79a412fad60909aff7475b0&dataset=attractions" target="_blank"><img src="src/gotoBtn.png"/></a>
+						</div>
+					</div>
+					<div class="mainPoiBottomSegment">
+						<div class="mainPoiNo">3</div>
+						<div class="poiTagging">
+							History & Culture
+						</div><br/>
+						<div class="poiTagging">
+							Places of Worship
+						</div>
+					</div>
+			</div>
+	
+			<div class="secPoiPanel">
+				<div class="secPoiImg">
+					<img src="src/sPoi7.png"/>
+				</div>
+				<div class="secPoiContent">
+					<div class="secPoiName">
+						<a href="vsapp://poi?uuid=007f22727f691f24b429de5e7c680215b00&dataset=shops">Chinatown Visitor Centre</a>
+					</div>
+					<div class="secPoiDesc">
+						Drop by the Visitor Centre behind the temple if you need recommendations or advice!
+					</div>
+				</div>
+			</div>
+	
+			<div class="secPoiPanel">
+				<div class="secPoiImg">
+					<img src="src/sPoi8.png"/>
+				</div>
+				<div class="secPoiContent">
+					<div class="secPoiName">
+						<a href="vsapp://poi?uuid=005d79d3bdeafec4b6c897c272f1d9c2bea&dataset=food_beverages">Chinatown Complex</a>
+					</div>
+					<div class="secPoiDesc">
+						Or visit the largest hawker center in Singapore with over 260 stalls to satisfy your belly!
+					</div>
+				</div>
+			</div>
+	
+			<div class="secPoiPanel">
+				<div class="secPoiImg">
+					<img src="src/sPoi9.png"/>
+				</div>
+				<div class="secPoiContent">
+					<div class="secPoiName">
+						<a href="vsapp://poi?uuid=0074421053857c646ada119034ef1b5d4f8&dataset=shops">Tai Chong Kok</a>
+					</div>
+					<div class="secPoiDesc">
+						Have a taste of mooncake, one of our popular snacks during Mid-Autumn Festival!
+					</div>
+				</div>
+			</div>
+	
+			<div class="mainPoiPanel" style="background-image: url('src/mPoi4.png');">		
+					<div class="mainPoiTopSegment">
+						<div class="mainPoiName">
+							Singapore City Gallery
+						</div>
+						<div class="mainPoiBtn">
+							<a href="vsapp://poi?uuid=002f87e7a63da1442c78e49c754741b2df7&dataset=attractions" target="_blank"><img src="src/gotoBtn.png"/></a>
+						</div>
+					</div>
+					<div class="mainPoiBottomSegment">
+						<div class="mainPoiNo">4</div>
+						<div class="poiTagging">
+							Attractions
+						</div>
+					</div>
+			</div>
+	
+			<div class="secPoiPanel">
+				<div class="secPoiImg">
+					<img src="src/sPoi10.png"/>
+				</div>
+				<div class="secPoiContent">
+					<div class="secPoiName">
+						<a href="vsapp://poi?uuid=005b8676827887946dcad638f49cd8c78c9&dataset=food_beverages">Maxwell Food Centre</a>
+					</div>
+					<div class="secPoiDesc">
+						Feeling famished after the long walk? Satisfy your hunger here! 
+					</div>
+				</div>
+			</div>
+	
+			<div class="secPoiPanel">
+				<div class="secPoiImg">
+					<img src="src/sPoi12.png"/>
+				</div>
+				<div class="secPoiContent">
+					<div class="secPoiName">
+						<a href="vsapp://poi?uuid=005bd7754d713de43b0b98c377faba71bdc&dataset=food_beverages">Tea Chapter</a>
+					</div>
+					<div class="secPoiDesc">
+						Experience a session of traditional tea making process here! 
+					</div>
+				</div>
+			</div>
+	
+			<div class="poiInfoPanel">
+				<div class="infoIcon">
+					<img src="src/infoIcon.png"/>
+				</div>
+				<div class="infoContent">
+					Or you can hit up one of the many cafes around the area!
+				</div>
+			</div>
+	
+			<div class="mainPoiPanel" style="background-image: url('src/mPoi5.png');">		
+					<div class="mainPoiTopSegment">
+						<div class="mainPoiName">
+							Thian Hock Keng Temple
+						</div>
+						<div class="mainPoiBtn">
+							<a href="vsapp://poi?uuid=00289d657032ac242e2938d7d63dc98bd6d&dataset=attractions" target="_blank"><img src="src/gotoBtn.png"/></a>
+						</div>
+					</div>
+					<div class="mainPoiBottomSegment">
+						<div class="mainPoiNo">5</div>
+						<div class="poiTagging">
+							History & Culture
+						</div><br/>
+						<div class="poiTagging">
+							Places for Worship
+						</div>
+					</div>
+			</div>
+	
+			<div class="secPoiPanel">
+				<div class="secPoiImg">
+					<img src="src/sPoi11.png"/>
+				</div>
+				<div class="secPoiContent">
+					<div class="secPoiName">
+						<a href="vsapp://poi?uuid=0026804d48e76b64d48b64a749531b1d3f9&dataset=attractions">Singapore Musical Box Museum</a>
+					</div>
+					<div class="secPoiDesc">
+						Enjoy a unique museum experience with some Peranakan snacks!.
+					</div>
+				</div>
+			</div>
+	
+			<div class="secPoiPanel">
+				<div class="secPoiImg">
+					<img src="src/sPoi13.png"/>
+				</div>
+				<div class="secPoiContent">
+					<div class="secPoiName">
+						<a href="vsapp://poi?uuid=0052231c4073ab04e9e88ad96224d87f019&dataset=food_beverages">Sarnies</a>
+					</div>
+					<div class="secPoiDesc">
+						Take a break from chinese cuisine and end your day with some cafe food!
+					</div>
+				</div>
+			</div>
+	
+		</div>
+	
+		<div class="infoPanel" style="margin-bottom:58px;">
+			<div class="infoTitle">
+				Keen to explore more?
+			</div>
+			<img src="src/googleMap.png" style="height:50px; margin: 12px 0px"/>
+			<div class="infoText">
+				We've come up with a list of interesting places in Google Maps to fill up the rest of your trip!
+			</div>
+			<a href="https://www.google.com/maps/d/u/5/edit?mid=1lmk12gmhEFZg_Ad3dOECXEuwoJ-_0Tk&usp=sharing" target="_blank">
+				<button class="ctaButton">
+					Open in Google Map
+				</button>
+			</a>
+		</div>
+		</div>
+	</body>
+	</html>
